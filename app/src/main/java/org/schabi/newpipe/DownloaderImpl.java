@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -37,14 +38,17 @@ public final class DownloaderImpl extends Downloader {
 
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
-    private final OkHttpClient client;
+    private final Call.Factory client;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
-        this.client = builder
+
+        OkHttpClient okHttpClient = builder
                 .readTimeout(30, TimeUnit.SECONDS)
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
                 .build();
+
+        this.client = SplunkRUMWrapper.instrumentOkHttp(okHttpClient);
         this.mCookies = new HashMap<>();
     }
 

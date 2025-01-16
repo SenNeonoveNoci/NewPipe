@@ -97,9 +97,11 @@ public class App extends Application {
         // Initialize settings first because other initializations can use its values
         NewPipeSettings.initSettings(this);
 
+        SplunkRUMWrapper.install(this);
+
         NewPipe.init(getDownloader(),
-            Localization.getPreferredLocalization(this),
-            Localization.getPreferredContentCountry(this));
+                Localization.getPreferredLocalization(this),
+                Localization.getPreferredContentCountry(this));
         Localization.initPrettyTime(Localization.resolvePrettyTime(getApplicationContext()));
 
         BridgeStateSaverInitializer.init(this);
@@ -118,6 +120,8 @@ public class App extends Application {
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
         configureRxJavaErrorHandler();
+
+        SplunkRUMWrapper.trackCustomEvent("app_on_create_finished", null);
     }
 
     @Override
